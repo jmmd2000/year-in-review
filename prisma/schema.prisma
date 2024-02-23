@@ -14,11 +14,96 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model User {
+  id               Int           @id @default(autoincrement())
+  google_id        String        @unique
+  username         String?       @unique
+  first_name       String?
+  last_name        String?
+  avatar_url       String
+  created_at       DateTime      @default(now())
+  emotions         Emotion[]
+  events           Event[]
+  days             Day[]
+  months           Month[]
+  years            Year[]
+}
 
-    @@index([name])
+model Emotion {
+  id                    Int           @id @default(autoincrement())
+  userID                Int
+  user                  User          @relation(fields: [userID], references: [id])
+  emotion_name          String
+  emotion_colour        String
+  count                 Int           @default(0)
+  last_used             DateTime?
+  days_since_last_used  Int           @default(0)
+  created_at            DateTime      @default(now())
+  days                  Day[]
+  months                Month[]
+
+  @@index([userID])
+}
+
+model Event {
+  id                    Int           @id @default(autoincrement())
+  userID                Int
+  user                  User          @relation(fields: [userID], references: [id])
+  event_name            String
+  event_colour          String
+  count                 Int           @default(0)
+  last_used             DateTime?
+  days_since_last_used  Int           @default(0)
+  created_at            DateTime      @default(now())
+  days                  Day[]
+  months                Month[]
+
+  @@index([userID])
+}
+
+model Day {
+    id                    Int           @id @default(autoincrement())
+    userID                Int
+    user                  User          @relation(fields: [userID], references: [id])
+    date                  DateTime
+    emotions              Emotion[]
+    events                Event[]
+    created_at            DateTime      @default(now())
+    monthID               Int
+    month                 Month         @relation(fields: [monthID], references: [id], map: "Day_Month_fkey")
+    yearID                Int
+    year                  Year          @relation(fields: [yearID], references: [id], map: "Day_Year_fkey")
+  
+    
+    @@index([userID])
+    @@index([yearID])
+    @@index([monthID])
+}
+
+model Month {
+    id                    Int           @id @default(autoincrement())
+    userID                Int
+    user                  User          @relation(fields: [userID], references: [id])
+    month                 String
+    yearID                Int
+    year                  Year          @relation(fields: [yearID], references: [id])
+    days                  Day[]
+    sorted_emotions       Emotion[] // Emotions sorted by count
+    sorted_events         Event[]   // Events sorted by count
+    created_at            DateTime      @default(now())
+    
+    @@index([userID])
+    @@index([yearID])
+}
+
+model Year {
+    id                    Int           @id @default(autoincrement())
+    userID                Int
+    user                  User          @relation(fields: [userID], references: [id])
+    year                  String
+    months                Month[]
+    days                  Day[]
+    created_at            DateTime      @default(now())
+    
+    @@index([userID])
 }
