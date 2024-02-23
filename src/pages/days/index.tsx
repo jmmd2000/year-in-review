@@ -1,13 +1,10 @@
 import Head from "next/head";
-import { api } from "~/utils/api";
-import { useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
   return (
     <>
       <Head>
-        <title>YearInReview - Home</title>
+        <title>YearInReview - Days</title>
         <meta
           name="description"
           content="YearInReview - A web-app for tracking your year"

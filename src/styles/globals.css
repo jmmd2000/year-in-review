@@ -5,7 +5,12 @@
 @layer base {
   html,
   body {
-    /* @apply min-h-screen w-full bg-gradient-to-br from-white to-teal-300 bg-cover bg-no-repeat; */
-    @apply bg-teal-50;
+    @apply bg-blur;
+  }
+}
+
+@layer components {
+  .blur-bg {
+    background-image: url("/public/bg.svg");
   }
 }
