@@ -21,6 +21,7 @@ model User {
   last_name        String?
   avatar_url       String
   created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
   emotions         Emotion[]
   events           Event[]
   days             Day[]
@@ -30,15 +31,17 @@ model User {
 
 model Emotion {
   id                    Int           @id @default(autoincrement())
-  userID                Int
-  user                  User          @relation(fields: [userID], references: [id])
+  userID                String
+  user                  User          @relation(fields: [userID], references: [google_id])
   emotion_name          String
   emotion_colour        String
-  count                 Int           @default(0)
+  count_in_month        Int           @default(0)
+  count_in_year         Int           @default(0)
   last_used             DateTime?
   days_since_last_used  Int           @default(0)
   created_at            DateTime      @default(now())
-  days                  Day[]
+  days                  Day[]  @relation("DayToEmotions")
+  primaryEmotionDays    Day[]  @relation("PrimaryEmotion")
   months                Month[]
 
   @@index([userID])
@@ -46,11 +49,12 @@ model Emotion {
 
 model Event {
   id                    Int           @id @default(autoincrement())
-  userID                Int
-  user                  User          @relation(fields: [userID], references: [id])
+  userID                String
+  user                  User          @relation(fields: [userID], references: [google_id])
   event_name            String
   event_colour          String
-  count                 Int           @default(0)
+  count_in_month        Int           @default(0)
+  count_in_year         Int           @default(0)
   last_used             DateTime?
   days_since_last_used  Int           @default(0)
   created_at            DateTime      @default(now())
@@ -62,28 +66,34 @@ model Event {
 
 model Day {
     id                    Int           @id @default(autoincrement())
-    userID                Int
-    user                  User          @relation(fields: [userID], references: [id])
+    userID                String
+    user                  User          @relation(fields: [userID], references: [google_id])
+    day_name              String
+    day_number            Int
     date                  DateTime
-    emotions              Emotion[]
+    emotions              Emotion[]     @relation("DayToEmotions")
+    primaryEmotionID      Int
+    primaryEmotion        Emotion?      @relation("PrimaryEmotion", fields: [primaryEmotionID], references: [id])
     events                Event[]
     created_at            DateTime      @default(now())
     monthID               Int
     month                 Month         @relation(fields: [monthID], references: [id], map: "Day_Month_fkey")
     yearID                Int
     year                  Year          @relation(fields: [yearID], references: [id], map: "Day_Year_fkey")
+    comments              String?
   
     
     @@index([userID])
     @@index([yearID])
     @@index([monthID])
+    @@index([primaryEmotionID])
 }
 
 model Month {
     id                    Int           @id @default(autoincrement())
-    userID                Int
-    user                  User          @relation(fields: [userID], references: [id])
-    month                 String
+    userID                String
+    user                  User          @relation(fields: [userID], references: [google_id])
+    month_name            String
     yearID                Int
     year                  Year          @relation(fields: [yearID], references: [id])
     days                  Day[]
@@ -97,9 +107,9 @@ model Month {
 
 model Year {
     id                    Int           @id @default(autoincrement())
-    userID                Int
-    user                  User          @relation(fields: [userID], references: [id])
-    year                  String
+    userID                String
+    user                  User          @relation(fields: [userID], references: [google_id])
+    year_name             String
     months                Month[]
     days                  Day[]
     created_at            DateTime      @default(now())

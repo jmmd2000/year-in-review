@@ -25,17 +25,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
   useHandleLogIn();
-  // const { mutate: createUser } = api.user.create.useMutation();
-
-  // useEffect(() => {
-  //   if (user.user) {
-  //     createUser({
-  //       first_name: user.user.firstName,
-  //       last_name: user.user.lastName,
-  //       avatar_url: user.user.imageUrl,
-  //     });
-  //   }
-  // }, []);
 
   return (
     <nav className="border-b border-b-emerald-200 bg-emerald-400">
@@ -58,20 +47,9 @@ const Navbar = () => {
             </div>
           </div>
           <div className="relative ml-3 hidden md:block">
-            {user ? (
-              <SignOutButton>
-                <button className="block max-w-max rounded-md bg-white px-3 py-2 text-base font-medium">
-                  Log out
-                </button>
-              </SignOutButton>
-            ) : (
-              <SignInButton>
-                <button className="block max-w-max rounded-md bg-white px-3 py-2 text-base font-medium">
-                  Log in
-                </button>
-              </SignInButton>
-            )}
+            <LoginButton user={user !== null && user !== undefined} />
           </div>
+
           <div className="-mr-2 flex md:hidden">
             {/* <!-- Mobile menu button --> */}
             <button
@@ -96,7 +74,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* <!-- Mobile menu, show/hide based on menu state. --> */}
+      {/* <!-- Mobile menu, show/hide based on open state. --> */}
       <div
         className={`${isOpen ? "block" : "hidden"} md:hidden`}
         id="mobile-menu"
@@ -108,19 +86,7 @@ const Navbar = () => {
         </div>
         <div className="border-t border-emerald-700 pb-3 pt-4">
           <div className="relative mx-3">
-            {user ? (
-              <SignOutButton>
-                <button className="block max-w-max rounded-md bg-white px-3 py-2 text-base font-medium">
-                  Log out
-                </button>
-              </SignOutButton>
-            ) : (
-              <SignInButton>
-                <button className="block max-w-max rounded-md bg-white px-3 py-2 text-base font-medium">
-                  Log in
-                </button>
-              </SignInButton>
-            )}
+            <LoginButton user={user !== null && user !== undefined} />
           </div>
         </div>
       </div>
@@ -149,5 +115,30 @@ const NavLink = (props: NavLinkProps) => {
     >
       {name}
     </Link>
+  );
+};
+
+interface LoginButtonProps {
+  user: boolean;
+}
+
+const LoginButton = (props: LoginButtonProps) => {
+  const { user } = props;
+  return (
+    <>
+      {user ? (
+        <SignOutButton>
+          <button className="block max-w-max rounded-md bg-white  px-3 py-2 text-base font-medium hover:bg-emerald-100">
+            Log out
+          </button>
+        </SignOutButton>
+      ) : (
+        <SignInButton>
+          <button className="block max-w-max rounded-md bg-white px-3 py-2 text-base font-medium hover:bg-emerald-100">
+            Log in
+          </button>
+        </SignInButton>
+      )}
+    </>
   );
 };
